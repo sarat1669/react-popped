@@ -1,7 +1,7 @@
 {
   "name": "react-popped",
   "version": "0.0.1",
-  "description": "Smart React Popover",
+  "description": "React Popover on Steroids",
   "main": "build/index.js",
   "peerDependencies": {},
   "dependencies": {
@@ -16,6 +16,13 @@
   "author": {
     "name": "Sarat Chandra Balla",
     "email": "sarat1669@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sarat1669/react-popped.git"
+  },
+  "bugs": {
+    "url": "http://github.com/sarat1669/react-popped/issues"
   },
   "license": "MIT",
   "devDependencies": {
