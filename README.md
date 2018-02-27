@@ -2,6 +2,10 @@
 
 React Popover on Steroids
 
+### Examples
+
+[Visit our project page](https://sarat1669.github.io/react-popped/)
+
 ### Installation
 
 [![react-popped](https://nodei.co/npm/react-popped.png)](https://npmjs.org/package/react-popped)

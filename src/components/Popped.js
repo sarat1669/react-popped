@@ -55,6 +55,7 @@ export default class Popped extends Component {
   componentDidMount() {
     let ltarget = this.state.target
     let target = ReactDOM.findDOMNode(this)
+    document.addEventListener('scroll', this._onScroll)
     this.timer = setTimeout(() => this.manageEventListeners(target, ltarget), 0)
   }
 
@@ -63,12 +64,11 @@ export default class Popped extends Component {
     this.state.scrollParents.map((sp) => {
       sp.removeEventListener('scroll', this._onScroll)
     })
-
     if(target) {
       target.removeEventListener('mouseenter', this._onMouseEnter)
       target.removeEventListener('mouseleave', this._onMouseLeave)
     }
-
+    document.removeEventListener('scroll', this._onScroll)
     clearTimeout(this.timer)
   }
 
@@ -79,11 +79,13 @@ export default class Popped extends Component {
   }
 
   render() {
+    let open = typeof this.props.open == 'boolean' ? this.props.open : this.state.open
+
     return (
       <Fragment>
         {this.props.children}
         <Popover
-          open={this.state.open}
+          open={open}
           order={this.props.order}
           target={this.state.target}
           position={this.props.position}

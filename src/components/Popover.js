@@ -1,15 +1,23 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import ReactDOM from 'react-dom'
 
 export default class Popover extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      open: false
+    }
   }
 
   componentDidMount() {
     let target = ReactDOM.findDOMNode(this)
     this.setState({ target })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      open: nextProps.open
+    })
   }
 
   autoAlign = (parentProps, popoverProps) => {
@@ -50,28 +58,37 @@ export default class Popover extends Component {
   }
 
   render() {
-    let parentProps = this.props.target ? this.props.target.getBoundingClientRect() : {}
-    let { top, left, width, height } = parentProps
+    let top = 0
+    let left = 0
+    let parentProps
 
-    if(this.state.target) {
-      let popoverProps = this.state.target.getBoundingClientRect()
-      let alignedProps = this.align(this.props.alignment || 'auto', parentProps, popoverProps)
-      top = alignedProps.top
-      left = alignedProps.left
+    if(this.state.open) {
+      parentProps = this.props.target ? this.props.target.getBoundingClientRect() : {}
+      top = parentProps.top
+      left = parentProps.left
+
+      if(this.state.target) {
+        let popoverProps = this.state.target.getBoundingClientRect()
+        let alignedProps = this.align(this.props.alignment || 'auto', parentProps, popoverProps)
+        top = alignedProps.top
+        left = alignedProps.left
+      }
     }
 
     let popoverTop = top || 0
     let popoverLeft = left || 0
 
     let style = {
-      visibility: this.props.open ? 'visible' : 'hidden', top: popoverTop, left: popoverLeft,
-      position: 'fixed', ...this.props.style, zIndex: 2147483647
+      visibility: this.state.open ? 'visible' : 'hidden', top: popoverTop, left: popoverLeft,
+      position: 'fixed', ...this.props.style, zIndex: 10
     }
 
     return ReactDOM.createPortal((
-        <span style={style}>
-          {this.props.children}
-        </span>
+        <Fragment>
+          <span style={style}>
+            {this.props.children}
+          </span>
+        </Fragment>
       ), document.body)
   }
 }
