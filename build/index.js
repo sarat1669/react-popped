@@ -1008,6 +1008,7 @@ var Popped = function (_Component) {
 
       var ltarget = this.state.target;
       var target = _reactDom2.default.findDOMNode(this);
+      document.addEventListener('scroll', this._onScroll);
       this.timer = setTimeout(function () {
         return _this3.manageEventListeners(target, ltarget);
       }, 0);
@@ -1021,12 +1022,11 @@ var Popped = function (_Component) {
       this.state.scrollParents.map(function (sp) {
         sp.removeEventListener('scroll', _this4._onScroll);
       });
-
       if (target) {
         target.removeEventListener('mouseenter', this._onMouseEnter);
         target.removeEventListener('mouseleave', this._onMouseLeave);
       }
-
+      document.removeEventListener('scroll', this._onScroll);
       clearTimeout(this.timer);
     }
   }, {
@@ -1043,6 +1043,8 @@ var Popped = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var open = typeof this.props.open == 'boolean' ? this.props.open : this.state.open;
+
       return _react2.default.createElement(
         _react.Fragment,
         null,
@@ -1050,7 +1052,7 @@ var Popped = function (_Component) {
         _react2.default.createElement(
           _Popover2.default,
           {
-            open: this.state.open,
+            open: open,
             order: this.props.order,
             target: this.state.target,
             position: this.props.position
@@ -1151,7 +1153,9 @@ var Popover = function (_Component) {
       }
     };
 
-    _this.state = {};
+    _this.state = {
+      open: false
+    };
     return _this;
   }
 
@@ -1162,34 +1166,48 @@ var Popover = function (_Component) {
       this.setState({ target: target });
     }
   }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      this.setState({
+        open: nextProps.open
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var parentProps = this.props.target ? this.props.target.getBoundingClientRect() : {};
-      var top = parentProps.top,
-          left = parentProps.left,
-          width = parentProps.width,
-          height = parentProps.height;
+      var top = 0;
+      var left = 0;
+      var parentProps = void 0;
 
+      if (this.state.open) {
+        parentProps = this.props.target ? this.props.target.getBoundingClientRect() : {};
+        top = parentProps.top;
+        left = parentProps.left;
 
-      if (this.state.target) {
-        var popoverProps = this.state.target.getBoundingClientRect();
-        var alignedProps = this.align(this.props.alignment || 'auto', parentProps, popoverProps);
-        top = alignedProps.top;
-        left = alignedProps.left;
+        if (this.state.target) {
+          var popoverProps = this.state.target.getBoundingClientRect();
+          var alignedProps = this.align(this.props.alignment || 'auto', parentProps, popoverProps);
+          top = alignedProps.top;
+          left = alignedProps.left;
+        }
       }
 
       var popoverTop = top || 0;
       var popoverLeft = left || 0;
 
       var style = _extends({
-        visibility: this.props.open ? 'visible' : 'hidden', top: popoverTop, left: popoverLeft,
-        position: 'fixed' }, this.props.style, { zIndex: 2147483647
+        visibility: this.state.open ? 'visible' : 'hidden', top: popoverTop, left: popoverLeft,
+        position: 'fixed' }, this.props.style, { zIndex: 10
       });
 
       return _reactDom2.default.createPortal(_react2.default.createElement(
-        'span',
-        { style: style },
-        this.props.children
+        _react.Fragment,
+        null,
+        _react2.default.createElement(
+          'span',
+          { style: style },
+          this.props.children
+        )
       ), document.body);
     }
   }]);
