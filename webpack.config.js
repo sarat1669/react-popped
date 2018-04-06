@@ -1,4 +1,6 @@
-var path = require('path');
+var path = require('path')
+var webpack = require('webpack')
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -23,5 +25,14 @@ module.exports = {
   },
   externals: {
     'react': 'commonjs react'
-  }
+  },
+  plugins: [
+    new webpack.DefinePlugin({ // <-- key to reducing React's size
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin(), //minify everything
+    new webpack.optimize.AggressiveMergingPlugin()//Merge chunks
+  ],
 }

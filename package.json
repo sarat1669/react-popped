@@ -1,12 +1,13 @@
 {
   "name": "react-popped",
-  "version": "0.0.2s",
+  "version": "0.0.3",
   "description": "React Popover on Steroids",
   "main": "build/index.js",
-  "peerDependencies": {},
-  "dependencies": {
+  "peerDependencies": {
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "dependencies": {
     "webpack": "^2.6.1"
   },
   "scripts": {
