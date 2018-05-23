@@ -11,13 +11,15 @@ export default class Popover extends Component {
 
   componentDidMount() {
     let target = ReactDOM.findDOMNode(this)
-    this.setState({ target })
+    if(this.popover) this.setState({ target })
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      open: nextProps.open
-    })
+    if(this.popover) this.setState({ open: nextProps.open })
+  }
+
+  componentWillUnmount() {
+    this.popover = null
   }
 
   autoAlign = (parentProps, popoverProps) => {
@@ -40,18 +42,26 @@ export default class Popover extends Component {
       case 'right':
         top = top + (height / 2) - (popoverProps.height / 2)
         left = left + width
+        if(top + popoverProps.height > window.innerHeight) top = (window.innerHeight - popoverProps.height)
+        if(top < 0) top = 0
         return { top, left }
       case 'left':
         top = top + (height / 2) - (popoverProps.height / 2)
         left = left - popoverProps.width
+        if(top + popoverProps.height > window.innerHeight) top = (window.innerHeight - popoverProps.height)
+        if(top < 0) top = 0
         return { top, left }
       case 'top':
         top = top - popoverProps.height
         left = left + (width / 2) - (popoverProps.width / 2)
+        if(left + popoverProps.width > window.innerWidth) left = (window.innerWidth - popoverProps.width)
+        if(left < 0) left = 0
         return { top, left }
       case 'bottom':
         top = top + height
         left = left + (width / 2) - (popoverProps.width / 2)
+        if(left + popoverProps.width > window.innerWidth) left = (window.innerWidth - popoverProps.width)
+        if(left < 0) left = 0
         return { top, left }
       case 'auto': return this.autoAlign(parentProps, popoverProps)
     }
@@ -66,10 +76,9 @@ export default class Popover extends Component {
       parentProps = this.props.target ? this.props.target.getBoundingClientRect() : {}
       top = parentProps.top
       left = parentProps.left
-
       if(this.state.target) {
         let popoverProps = this.state.target.getBoundingClientRect()
-        let alignedProps = this.align(this.props.alignment || 'auto', parentProps, popoverProps)
+        let alignedProps = this.align(this.props.position || 'auto', parentProps, popoverProps)
         top = alignedProps.top
         left = alignedProps.left
       }
@@ -85,7 +94,7 @@ export default class Popover extends Component {
 
     return ReactDOM.createPortal((
         <Fragment>
-          <span style={style}>
+          <span style={style} ref={(ref) => this.popover = ref}>
             {this.props.children}
           </span>
         </Fragment>

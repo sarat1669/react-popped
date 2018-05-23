@@ -19,15 +19,15 @@ export default class Popped extends Component {
   }
 
   _onMouseEnter = () => {
-    this.setState({ open: true })
+    if(this.popover) this.setState({ open: true })
   }
 
   _onMouseLeave = () => {
-    this.setState({ open: false })
+    if(this.popover) this.setState({ open: false })
   }
 
   _onScroll = () => {
-    this.forceUpdate()
+    if(this.popover) this.forceUpdate()
   }
 
   manageEventListeners(target, ltarget) {
@@ -49,7 +49,7 @@ export default class Popped extends Component {
       sp.removeEventListener('scroll', this._onScroll)
     })
 
-    this.setState({ target, scrollParents })
+    if(this.popover) this.setState({ target, scrollParents })
   }
 
   componentDidMount() {
@@ -78,6 +78,10 @@ export default class Popped extends Component {
     this.timer = setTimeout(() => this.manageEventListeners(target, ltarget), 0)
   }
 
+  componentWillUnmount() {
+    this.popover = null
+  }
+
   render() {
     let open = typeof this.props.open == 'boolean' ? this.props.open : this.state.open
 
@@ -89,6 +93,7 @@ export default class Popped extends Component {
           order={this.props.order}
           target={this.state.target}
           position={this.props.position}
+          ref={(ref) => this.popover = ref}
         >
           {this.props.content}
         </Popover>
